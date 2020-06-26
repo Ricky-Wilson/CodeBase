@@ -1,0 +1,69 @@
+{
+	"root": true,
+
+	"extends": "../.eslintrc-browser.json",
+
+	"parserOptions": {
+		"ecmaVersion": 2015,
+		"sourceType": "module"
+	},
+
+	"plugins": [ "import" ],
+
+	"rules": {
+		"import/extensions": [ "error", "always" ],
+		"import/no-cycle": "error",
+		"import/no-unused-modules": [ "error", {
+			"unusedExports": true,
+			"ignoreExports": [ "src/*.js" ]
+		} ],
+		"indent": [ "error", "tab", {
+			"outerIIFEBody": 0
+		} ]
+	},
+
+	"overrides": [
+		{
+			"files": "wrapper.js",
+			"parserOptions": {
+				"ecmaVersion": 5,
+				"sourceType": "script"
+			},
+			"rules": {
+				"no-unused-vars": "off",
+				"indent": [ "error", "tab", {
+
+					// Unlike other codes, "wrapper.js" is implemented in UMD.
+					// So it required a specific exception for jQuery's UMD
+					// Code Style. This makes that indentation check is not
+					// performed for 1 depth of outer FunctionExpressions
+					"ignoredNodes": [
+						"Program > ExpressionStatement > CallExpression > :last-child > *"
+					]
+				} ]
+			},
+			"globals": {
+				"jQuery": false,
+				"module": true
+			}
+		},
+
+		{
+			"files": "exports/amd.js",
+			"globals": {
+				"define": false
+			}
+		},
+
+		{
+			"files": "core.js",
+			"globals": {
+
+				// Defining Symbol globally would create a danger of using
+				// it unguarded in another place, it seems safer to define
+				// it only for this module.
+				"Symbol": false
+			}
+		}
+	]
+}
