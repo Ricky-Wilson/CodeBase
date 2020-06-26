@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 '''
 Transfor a group of modules into a
 single module by removing the .git directory
@@ -24,5 +26,6 @@ def merge_modules(master='.'):
 
 if __name__ == '__main__':
     merge_modules()
+
 
 
