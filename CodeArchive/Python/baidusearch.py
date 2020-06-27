@@ -1,0 +1,36 @@
+from theHarvester.lib.core import *
+from theHarvester.parsers import myparser
+import grequests
+
+
+class SearchBaidu:
+
+    def __init__(self, word, limit):
+        self.word = word
+        self.total_results = ""
+        self.server = 'www.baidu.com'
+        self.hostname = 'www.baidu.com'
+        self.limit = limit
+
+    def do_search(self):
+        headers = {
+            'Host': self.hostname,
+            'User-agent': Core.get_user_agent()
+        }
+        base_url = f'https://{self.server}/s?wd=%40{self.word}&pnxx&oq={self.word}'
+        urls = [base_url.replace("xx", str(num)) for num in range(0, self.limit, 10) if num <= self.limit]
+        req = (grequests.get(url, headers=headers, timeout=5) for url in urls)
+        responses = grequests.imap(req, size=5)
+        for response in responses:
+            self.total_results += response.content.decode('UTF-8')
+
+    def process(self):
+        self.do_search()
+
+    def get_emails(self):
+        rawres = myparser.Parser(self.total_results, self.word)
+        return rawres.emails()
+
+    def get_hostnames(self):
+        rawres = myparser.Parser(self.total_results, self.word)
+        return rawres.hostnames()
